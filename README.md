@@ -3,7 +3,7 @@
 **Strider Flow** is a way to structure workflows as **linear segments** called **Striders**.  
 Each Strider is a reusable tract of Steps that shares context and can chain to other Striders to form a complete process.
 
-## 🔗 What is a Strider?
+## What is a Strider?
 
 A **Strider** is:
 - A strictly **linear sequence of Steps**, executed one after another.
@@ -18,7 +18,7 @@ A Strider has:
 
 ---
 
-## 🧩 What is a Step?
+## What is a Step?
 
 A **Step** is the smallest unit inside a Strider.
 
@@ -39,7 +39,7 @@ A Step typically has:
 
 ---
 
-## 📦 What is Context?
+## What is Context?
 
 **Context** is the shared memory during a Strider’s execution.  
 - Stores inputs, results, and any variables that Steps need.
@@ -48,7 +48,7 @@ A Step typically has:
 
 ---
 
-## ⚙️ What is a Strider Flow?
+## What is a Strider Flow?
 
 A **Strider Flow** is a workflow structure built from multiple **Striders**, each representing a strictly linear tract of Steps.
 
@@ -64,7 +64,7 @@ A Strider Flow is **engine-agnostic** and can be implemented inside any process 
 
 ---
 
-## ✅ When to use Strider Flows
+## When to use Strider Flows
 
 Use Strider Flows to:
 - Make workflows modular, predictable, and easy to test.
@@ -73,7 +73,7 @@ Use Strider Flows to:
 
 ---
 
-## 📄 License
+## License
 
 MIT — free to use, modify, and extend.
 
