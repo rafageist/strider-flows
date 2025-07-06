@@ -1,0 +1,74 @@
+[
+  {
+    "id": "p1",
+    "description": "Strider #1",
+    "steps": [
+      {
+        "stepId": "s1",
+        "condition": "true",
+        "description": "",
+        "operationCode": "alert('hello');"
+      },
+      {
+        "stepId": "s2",
+        "condition": "true",
+        "description": "",
+        "operationCode": "context.flag = 2;"
+      },
+      {
+        "stepId": "s3",
+        "condition": "context.flag==2",
+        "description": "",
+        "operationCode": "alert('flag is 2');\napi.executeStriderById('p2');"
+      },
+      {
+        "stepId": "s4",
+        "condition": "context.flag==1",
+        "description": "",
+        "operationCode": "alert('flag is 1');"
+      },
+      {
+        "stepId": "s5",
+        "condition": "true",
+        "description": "alert('final step of Strider 1');",
+        "operationCode": "alert('final step of Strider 1');"
+      }
+    ]
+  },
+  {
+    "id": "p2",
+    "description": "Strider #2",
+    "steps": [
+      {
+        "stepId": "s1",
+        "condition": "true",
+        "description": "",
+        "operationCode": "alert('I am the Strider 2');"
+      },
+      {
+        "stepId": "s2",
+        "condition": "true",
+        "description": "context.msg = \"suriname\"",
+        "operationCode": "window.msg = \"suriname\""
+      },
+      {
+        "stepId": "s3",
+        "condition": "true",
+        "description": "",
+        "operationCode": "api.executeStriderById('p3')"
+      }
+    ]
+  },
+  {
+    "id": "p3",
+    "description": "Strider #3",
+    "steps": [
+      {
+        "stepId": "s1",
+        "condition": "true",
+        "description": "",
+        "operationCode": "alert(window.msg);"
+      }
+    ]
+  }
+]
