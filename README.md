@@ -16,8 +16,6 @@ A Strider has:
 - **Description**: (Optional) Short explanation.
 - **Steps[]**: Ordered list of Steps.
 
----
-
 ## What is a Step?
 
 A **Step** is the smallest unit inside a Strider.
@@ -37,16 +35,12 @@ A Step typically has:
 - **Parameters**: (Optional) Values required by the Operation.
 - **Result**: The output produced.
 
----
-
 ## What is Context?
 
 **Context** is the shared memory during a Strider’s execution.  
 - Stores inputs, results, and any variables that Steps need.
 - Ensures data flows naturally between Steps.
 - If a Step jumps to another Strider, the Context can be passed or merged.
-
----
 
 ## What is a Strider Flow?
 
@@ -62,8 +56,6 @@ Without explicit jumps, Striders are never executed arbitrarily.
 
 A Strider Flow is **engine-agnostic** and can be implemented inside any process engine, pipeline, or orchestration framework.
 
----
-
 ## When to use Strider Flows
 
 Use Strider Flows to:
@@ -71,12 +63,8 @@ Use Strider Flows to:
 - Break complex logic into clear, reusable linear tracts.
 - Control process transitions explicitly through Steps, never implicitly.
 
----
-
 ## License
 
 MIT — free to use, modify, and extend.
-
----
 
 **Author:** [Rafa Rodriguez](https://rafageist.com)
