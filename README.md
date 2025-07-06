@@ -3,6 +3,9 @@
 **Strider Flow** is a way to structure workflows as **linear segments** called **Striders**.  
 Each Strider is a reusable tract of Steps that shares context and can chain to other Striders to form a complete process.
 
+> [!WARNING]
+> This document is a work in progress and subject to modifications.
+
 ## What is a Strider?
 
 A **Strider** is:
