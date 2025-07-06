@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Strider Flow Designer - Bootstrap Enhanced</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+  <style>
+    body { padding: 40px; }
+    .CodeMirror { border: 1px solid #ddd; height: auto; }
+    pre { background: #f8f9fa; padding: 10px; border-radius: 4px; }
+    .step { border: 1px dashed #999; padding: 10px; margin: 10px; border-radius: 4px; background: #fff; flex: 1 1 300px; }
+    .strider { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 4px; background: #fdfdfd; }
+    .steps-container { display: flex; flex-wrap: wrap; gap: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mb-4">Strider Flow Designer <small class="text-muted">(Bootstrap + CodeMirror)</small></h1>
+    <div class="mb-4">
+      <h2>Create Strider</h2>
+      <label class="form-label">Strider Name:</label>
+      <input id="striderName" type="text" class="form-control" />
+      <label class="form-label">Description:</label>
+      <textarea id="striderDesc" class="form-control"></textarea>
+      <button onclick="createStrider()" class="btn btn-primary mt-2">Add Strider</button>
+    </div>
+
+    <h2>Striders</h2>
+    <div id="striderList"></div>
+
+    <h2>Output JSON</h2>
+    <pre id="output"></pre>
+
+    <!-- Permite pegar JSON para cargar striders -->
+    <div class="mb-4">
+      <label class="form-label">Pega aquí el JSON de striders:</label>
+      <textarea id="jsonTextInput" class="form-control" rows="4" placeholder="Pega aquí el JSON exportado"></textarea>
+      <button onclick="loadStridersFromTextarea()" class="btn btn-info mt-2">Cargar striders</button>
+    </div>
+  </div>
+  <script>
+    let striders = [];
+
+    function createStrider() {
+      const id = document.getElementById('striderName').value.trim();
+      const description = document.getElementById('striderDesc').value.trim();
+      if (!id) return alert('Strider ID required');
+      striders.push({
+        id,
+        description,
+        steps: []
+      });
+      renderStriders();
+    }
+
+    function editStrider(sid) {
+      const strider = striders.find(s => s.id === sid);
+      const newId = prompt('New strider ID:', strider.id);
+      const newDescription = prompt('New description:', strider.description);
+      if (newId) strider.id = newId;
+      if (newDescription) strider.description = newDescription;
+      renderStriders();
+    }
+
+    function loadStridersFromTextarea() {
+      const jsonText = document.getElementById('jsonTextInput').value.trim();
+      if (!jsonText) return alert('No JSON data found');
+      try {
+        const loadedStriders = JSON.parse(jsonText);
+        striders = loadedStriders.map(s => ({
+          id: s.id,
+          description: s.description,
+          steps: s.steps.map(step => ({
+            stepId: step.stepId,
+            condition: step.condition,
+            description: step.description,
+            operationCode: step.operationCode
+          }))
+        }));
+        renderStriders();
+        alert('Striders loaded successfully');
+      } catch (e) {
+        alert('Invalid JSON format');
+        console.error(e);
+      }
+    }
+
+    const api = {
+      executeStriderById: function(striderId) {
+        const strider = striders.find(s => s.id === striderId);
+        if (!strider) return alert('Strider not found');
+        let context = {};
+        alert(`Executing strider: ${strider.description}`);
+        for (const step of strider.steps) {
+          const cond = step.condition ? eval(step.condition) : true;
+          if (cond) {
+            console.log(`Executing ${step.stepId}`);
+            try {
+              eval(step.operationCode);
+            } catch (e) {
+              console.error(`Error in step ${step.stepId}:`, e);
+            }
+          } else {
+            console.log(`Skipping ${step.stepId} (condition false)`);
+          }
+        }
+        alert('Execution complete! Check console for details.');
+        console.log('Final Context:', context);
+      },
+
+      jumpToStep: function(striderId, stepId) {
+        const strider = striders.find(s => s.id === striderId);
+        if (!strider) return alert('Strider not found');
+        let context = {};
+        let found = false;
+        for (const step of strider.steps) {
+          if (step.stepId === stepId) {
+            found = true;
+            const cond = step.condition ? eval(step.condition) : true;
+            if (cond) {
+              console.log(`Jumped and executing ${step.stepId}`);
+              try {
+                eval(step.operationCode);
+              } catch (e) {
+                console.error(`Error in step ${step.stepId}:`, e);
+              }
+            } else {
+              console.log(`Jumped but skipping ${step.stepId} (condition false)`);
+            }
+            break;
+          }
+        }
+        if (!found) alert('Step not found');
+        else alert('Jump execution complete! Check console for details.');
+        console.log('Final Context:', context);
+      }
+    };
+
+    function renderStriders() {
+      const list = document.getElementById('striderList');
+      list.innerHTML = '';
+      striders.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'strider';
+        div.innerHTML = `<h5>${s.description} <span class='text-muted'>(ID: ${s.id})</span></h5>
+          <button onclick="addStep('${s.id}')" class="btn btn-sm btn-success">Add Step</button>
+          <button onclick="api.executeStriderById('${s.id}')" class="btn btn-sm btn-warning">Execute</button>
+          <button onclick="editStrider('${s.id}')" class="btn btn-sm btn-secondary">Edit</button>
+          <button onclick="deleteStrider('${s.id}')" class="btn btn-sm btn-danger">Delete</button>
+          <div class='steps-container'></div>`;
+
+        const stepsContainer = div.querySelector('.steps-container');
+
+        if (s.steps.length > 0) {
+          const table = document.createElement('table');
+          table.className = 'table table-bordered table-sm align-middle';
+          table.innerHTML = `
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>ID</th>
+                <th>Condition</th>
+                <th>Description</th>
+                <th>Operation Code</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          `;
+          const tbody = table.querySelector('tbody');
+          s.steps.forEach((step, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${step.stepId}</td>
+              <td>${step.condition || ''}</td>
+              <td>${step.description || ''}</td>
+              <td style="min-width:220px;">
+                <textarea id="editor_${s.id}_${index}">${step.operationCode}</textarea>
+              </td>
+              <td>
+                <button onclick="editStep('${s.id}', ${index})" class="btn btn-sm btn-secondary mb-1">Edit</button>
+                <button onclick="deleteStep('${s.id}', ${index})" class="btn btn-sm btn-danger mb-1">Delete</button>
+                <button onclick="api.jumpToStep('${s.id}', '${step.stepId}')" class="btn btn-sm btn-info mb-1">Jump</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+          stepsContainer.appendChild(table);
+        } else {
+          stepsContainer.innerHTML = '<div class="text-muted">No steps yet.</div>';
+        }
+
+        list.appendChild(div);
+      });
+
+      striders.forEach(s => {
+        s.steps.forEach((step, index) => {
+          const editor = CodeMirror.fromTextArea(
+            document.getElementById(`editor_${s.id}_${index}`),
+            { mode: "javascript", lineNumbers: true }
+          );
+          editor.on("change", cm => {
+            step.operationCode = cm.getValue();
+            document.getElementById('output').textContent = JSON.stringify(striders, null, 2);
+          });
+        });
+      });
+
+      document.getElementById('output').textContent = JSON.stringify(striders, null, 2);
+    }
+
+    document.getElementById('output').textContent = JSON.stringify(striders, null, 2);
+  </script>
+</body>
+</html>
