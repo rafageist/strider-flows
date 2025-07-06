@@ -3,8 +3,6 @@
 **Strider Flow** is a way to structure workflows as **linear segments** called **Striders**.  
 Each Strider is a reusable tract of Steps that shares context and can chain to other Striders to form a complete process.
 
----
-
 ## 🔗 What is a Strider?
 
 A **Strider** is:
@@ -25,9 +23,11 @@ A Strider has:
 A **Step** is the smallest unit inside a Strider.
 
 Each Step:
-- Receives **input**: from Context or the result of the previous Step.
-- Executes a predefined **Operation**: logic that can read/update Context, process data, or even jump to another Strider.
-- Produces a **Result**: which can be used by the next Step or saved to Context.
+- Has access to the **Context**, which holds any data relevant to the Flow, including results from previous Steps.
+- Executes an **Operation** that can read or update the Context.
+- Automatically produces a **Result**, which is saved into the Context by default.
+- May add or modify other arbitrary data in the Context.
+- May include a jump to another Strider as part of its Operation.
 
 A Step typically has:
 - **ID**: Unique within its Strider.
@@ -50,23 +50,26 @@ A Step typically has:
 
 ## ⚙️ What is a Strider Flow?
 
-A **Strider Flow** is the orchestration of multiple Striders:
-- Each Strider runs its Steps linearly.
-- Steps can trigger jumps to other Striders via their Operations.
-- The Flow continues until there are no more jumps.
+A **Strider Flow** is a workflow structure built from multiple **Striders**, each representing a strictly linear tract of Steps.
 
-This structure is **engine-agnostic**: it works inside any process engine, pipeline, or orchestration framework.  
-It also fits naturally alongside:
-- **Process Design Pattern (PDP)**: for process lifecycle control.
-- **Stage Design Pattern (SDP)**: for event-based communication.
+- Each Strider runs its Steps in order, reading and writing to a shared **Context**.
+- Execution starts from a **defined initial Strider**.
+- Steps decide explicitly if and where to jump next. There is **no automatic execution order** across Striders.
+- If no Step triggers a jump, the Flow ends by design — there are no implicit transitions.
+
+This ensures that Striders are **not just static containers** but active, predictable segments that control how the Flow moves forward.  
+Without explicit jumps, Striders are never executed arbitrarily.
+
+A Strider Flow is **engine-agnostic** and can be implemented inside any process engine, pipeline, or orchestration framework.
 
 ---
 
 ## ✅ When to use Strider Flows
 
-- To make complex workflows modular, predictable, and testable.
-- To break logic into clear, linear segments.
-- To reuse common Steps or Striders across different Flows.
+Use Strider Flows to:
+- Make workflows modular, predictable, and easy to test.
+- Break complex logic into clear, reusable linear tracts.
+- Control process transitions explicitly through Steps, never implicitly.
 
 ---
 
